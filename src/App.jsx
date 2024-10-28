@@ -3,6 +3,7 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, Container, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import axios from "axios";
 
 const App = () => {
   const [city, setCity] = useState("");
@@ -23,12 +24,14 @@ const App = () => {
     setError(null);
 
     try {
-      const response = await fetch(apiWeather + city);
-      if (!response.ok) throw new Error("City not found");
-      const data = await response.json();
-      setWeather(data);
+      const response = await axios.get(apiWeather + city);
+      setWeather(response.data);
     } catch (err) {
-      setError(err.message);
+      if (err.response) {
+        setError("City not found");
+      } else {
+        setError("an error has ocurred");
+      }
     } finally {
       setLoading(false);
     }
